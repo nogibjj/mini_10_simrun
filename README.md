@@ -1,9 +1,12 @@
 # Data Analysis: Glucose, Insulin, and BMI as predictor variables on the outcome variable (whether a patient is Diabetic or not)
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/gist/simrunsharma/03caae81f132f704a593bfe49d9afd53/stats.ipynb#scrollTo=Sx3tllCZ0Ou_)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/gist/simrunsharma/bb556644aa675c59b2b208a5782f1802/diabetes.ipynb#scrollTo=bAN4CmBeC9Sm)
+
+[![Install](https://github.com/nogibjj/mini_10_simrun/actions/workflows/install.yml/badge.svg)](https://github.com/nogibjj/mini_10_simrun/actions/workflows/install.yml)[![Lint](https://github.com/nogibjj/mini_10_simrun/actions/workflows/lint.yml/badge.svg)](https://github.com/nogibjj/mini_10_simrun/actions/workflows/lint.yml)
+[![Format](https://github.com/nogibjj/mini_10_simrun/actions/workflows/format.yml/badge.svg)](https://github.com/nogibjj/mini_10_simrun/actions/workflows/format.yml)
+[![Test](https://github.com/nogibjj/mini_10_simrun/actions/workflows/test.yml/badge.svg)](https://github.com/nogibjj/mini_10_simrun/actions/workflows/test.yml)
 
 
-[![Install](https://github.com/nogibjj/Simrun_Continuous_Integration_using_GitHub_Actions_of_Python_Data_Science_Project/actions/workflows/install.yml/badge.svg)](https://github.com/nogibjj/Simrun_Continuous_Integration_using_GitHub_Actions_of_Python_Data_Science_Project/actions/workflows/install.yml)[![Lint](https://github.com/nogibjj/Simrun_Continuous_Integration_using_GitHub_Actions_of_Python_Data_Science_Project/actions/workflows/lint.yml/badge.svg)](https://github.com/nogibjj/Simrun_Continuous_Integration_using_GitHub_Actions_of_Python_Data_Science_Project/actions/workflows/lint.yml)[![Format](https://github.com/nogibjj/Simrun_Continuous_Integration_using_GitHub_Actions_of_Python_Data_Science_Project/actions/workflows/format.yml/badge.svg)](https://github.com/nogibjj/Simrun_Continuous_Integration_using_GitHub_Actions_of_Python_Data_Science_Project/actions/workflows/format.yml)[![Test](https://github.com/nogibjj/Simrun_Continuous_Integration_using_GitHub_Actions_of_Python_Data_Science_Project/actions/workflows/test.yml/badge.svg)](https://github.com/nogibjj/Simrun_Continuous_Integration_using_GitHub_Actions_of_Python_Data_Science_Project/actions/workflows/test.yml)
 
 ## Data Source
 This dataset contains information about female patients that are at least 21 years old and are of Pima Indian Heritage. From each patient the dataset gleans diagnostic measurements of BMI, Insulin, Pregnancies, Blood Pressure, Skin Thickness, Glucose, etc. This data was collected from the National Institute of Diabetes and Digestive and Kidney Diseases. The objective is to determine if the patient has diabetes or not. The outcome variable tells with a (1-Diabetic) v. (0-Not Diabetic). I specifcally wanted to analyze Insulin, Glucose, and BMI as my predictor variables. I conduct a descriptive analysis/statistics of this dataset to deeper understand these variables relationship with Diabetes.
@@ -11,20 +14,53 @@ You can access the data from the following URL: [Diabetes Database](https://www.
 
 ## Code Overview
 
-### What are gists?
-Gists provide a simple way to share code snippets with others. Every gist is a Git repository, which means that it can be forked and cloned. If you are signed in to GitHub when you create a gist, the gist will be associated with your account and you will see it in your list of gists when you navigate to your gist home page.
+# PySpark Data Analysis Example
 
-Gists can be public or secret. Public gists show up in Discover, where people can browse new gists as they're created. They're also searchable, so you can use them if you'd like other people to find and see your work.
+**Description:**
 
-#### What is comprised in the Jupyter Notebook?
-I am using many different functions to create a holistic understanding of my statistical analysis along with visualizing the data in three different plots and tables. 
-  1. get_median()
-  2. get_mean()
-  3. get_std_dev()
-  4. minimum()
-  5. maximum()
-  6. visualize_dataset()
-  7. display_statistics()
+This code snippet demonstrates how to use PySpark to perform data analysis on a dataset stored in a CSV file named "diabetes.csv." The code covers various data manipulation and analysis operations, including loading data, data type conversion, and aggregation. It uses the PySpark library to work with big data in a distributed computing environment.
+
+**Installation:**
+
+Before running the code, make sure you have PySpark installed. You can use pip to install it:
+
+```sh
+!pip install pyspark
+```
+**Usage:**
+
+1. Import the required libraries:
+
+   ```python
+   import pyspark
+   import pandas as pd
+   from pyspark.sql import SparkSession
+   from pyspark.sql.types import IntegerType
+   
+2. Load the CSV data into a Spark DataFrame and display it:
+```sh
+spark = SparkSession.builder.appName("Practice").getOrCreate()
+df = spark.read.option('header','true').csv('diabetes.csv')
+df.show()
+```
+3.Perform data type conversion for specific columns:
+```sh
+df = df.withColumn("Glucose", df["Glucose"].cast(IntegerType()))
+# Repeat for other columns as needed
+```
+4. Conduct various data analysis operations, such as grouping and aggregation:
+```sh
+df.groupBy("Age").sum("Glucose").show()
+# Repeat for other analysis operations
+```
+5. To find counts and aggregate statistics:
+```sh
+df.groupBy("Outcome").count().show()
+df.agg({"Glucose": "sum", "BMI": "sum", "Outcome": "sum", "BloodPressure": "sum", "SkinThickness": "sum"}).show()
+```
+
+
+
 
 ### MakeFile and Workflows
 I created four different workflows to show each step of my Makefile.
@@ -35,39 +71,41 @@ Lint:
 ```sh
 nbqa ruff src/*.ipynb
 ```
-![Alt text](image-1.png)
-
 Format: 
 ```sh
 nbqa black src/*.ipynb
 ```  
-![Alt text](image.png)
-
 Test: 
 ```sh
 python -m pytest --nbval src/*.ipynb
 ```
 
-![Alt text](image-2.png)
+<img width="496" alt="image" src="https://github.com/nogibjj/mini_10_simrun/assets/141798228/0c1970b0-9011-4473-98d0-0bbe09cd5bdf">
 
-
-
-### 5. Understanding the statistics functions
-The objective is to analyze the relationship between Insulin, Glucose, BMI, and diabetes status (1 for diabetic, 0 for not diabetic). The functions defined calculate maximum, minimum, mean, median, and standard deviation for these key variables, aiding in a descriptive analysis of their association with diabetes.
-
-### 6. Understanding the Data Visualization functions
-In this code, count plots offer a glimpse into the distribution of data types, especially the prevalence of diabetic and non-diabetic cases. Understanding this distribution is vital for addressing class imbalance and potential biases in a diabetes prediction scenario. On the other hand, bar plots help visually compare predictor variables like Glucose, Insulin, and BMI against diabetes status, revealing insights into their association with the outcome. These visualizations aid in identifying patterns and trends, such as higher Glucose levels being more common among diabetic patients. Overall, count and bar plots provide valuable visual context, enabling informed decisions in diabetes research and predictive modeling.
 
 ## Results
 
-![After executing the code, the following descriptive statistics are for Glucose, Insulin, and BMI](https://user-images.githubusercontent.com/141798228/268531816-2f9924ab-d11c-422a-b509-bb3cb042a723.jpg)
+<img width="607" alt="image" src="https://github.com/nogibjj/mini_10_simrun/assets/141798228/fcf10bc2-de15-4ea1-ace5-db427f473393">
 
-These statistics offer insights into the central tendency and spread of the diabetes patients, contributing to a better understanding of its distribution.
+**Aggregation and Grouping:**
 
-The visualization below illustrates the relationship between the predictor variable (Insulin, Glucose, BMI) and the Outcome variable (Whether a patient has diabetes or doesn't have diabetes)
+In the provided code, you'll notice the use of two important PySpark functions—`agg` and `groupBy`. These functions play a crucial role in data analysis and aggregation operations.
 
-![Countplot](https://user-images.githubusercontent.com/141798228/268531789-4ee528a7-c91f-4281-b2e6-ea15daa89a42.png)
-![Barplot](https://user-images.githubusercontent.com/141798228/268531736-b20fb998-b839-4c6a-b8af-3749b5ed8f4b.png)
+1. **`groupBy` Function:**
+
+   The `groupBy` function is used to group data in the DataFrame based on one or more columns. In the code, you can see examples like:
+```sh
+df.groupBy("Age").sum("Glucose").show()
+```
+<img width="300" alt="image" src="https://github.com/nogibjj/mini_10_simrun/assets/141798228/4d9df804-f200-41d5-b7a5-479b5d5a8fab">
+
+2. agg Function:
+
+The agg (short for "aggregate") function is used to perform aggregate operations on one or more columns of a DataFrame. In the code, you can see an example like:
+```sh
+df.agg({"Glucose": "sum", "BMI": "sum", "Outcome": "sum", "BloodPressure": "sum", "SkinThickness": "sum"}).show()
+```
+<img width="501" alt="image" src="https://github.com/nogibjj/mini_10_simrun/assets/141798228/0c371093-4655-4b32-a3ee-b218477c424b">
 
 ## Conclusion
 This script serves as a valuable tool for investigating the interplay between crucial predictor variables—Glucose, Insulin, and BMI—and the diabetes status indicator within the context of the Pima Indian female patient dataset. By offering essential descriptive statistics and intuitive visualizations like count plots and bar plots, it allows for a deeper understanding of how these variables are linked to the likelihood of diabetes. These insights provide a solid foundation for conducting more advanced analyses and informed decision-making in the domain of diabetes research and prediction
